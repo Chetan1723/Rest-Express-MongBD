@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Lato', sans-serif;
+      }
+
+      /* Style the tab */
+      .tab {
+        float: left;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+        width: 30%;
+        height: 300px;
+      }
+
+      /* Style the buttons inside the tab */
+      .tab button {
+        display: block;
+        background-color: inherit;
+        color: black;
+        padding: 22px 16px;
+        width: 100%;
+        border: none;
+        outline: none;
+        text-align: left;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+
+      /* Create an active/current "tab button" class */
+      .tab button.active {
+        background-color: #ccc;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        float: left;
+        padding: 0px 12px;
+        border: 1px solid #ccc;
+        width: 70%;
+        border-left: none;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <div class="tab">
+      <button class="tablinks" onclick="openCity(event, '1')" id="defaultOpen">
+        Add
+      </button>
+      <button class="tablinks" onclick="openCity(event, '2')" id="defaultOpen">
+        Search
+      </button>
+      <button class="tablinks" onclick="openCity(event, '3')" id="defaultOpen">
+        Update
+      </button>
+      <button class="tablinks" onclick="openCity(event, '4')" id="defaultOpen">
+        Delete
+      </button>
+      <button class="tablinks" onclick="openCity(event, '5')" id="defaultOpen">
+        See All location Details
+      </button>
+    </div>
+
+    <div id="1" class="tabcontent">
+      <h3>Add Data</h3>
+      <div>
+        <input type="text" id="name" placeholder="name" />
+        <input type="text" id="city" placeholder="city" />
+        <input type="text" id="country" placeholder="country" />
+        <input type="text" id="latitude" placeholder="latitude" />
+        <input type="text" id="longitude" placeholder="longitude" />
+        <button id="submit">Submit</button>
+      </div>
+    </div>
+
+    <div id="2" class="tabcontent">
+      <h3>Search</h3>
+      <input type="text" id="idSearch" placeholder="Enter Location to search" />
+      <button id="search">Search</button>
+    </div>
+
+    <div id="3" class="tabcontent">
+      <h3>Search</h3>
+      <input type="text" id="name2" placeholder="name" />
+      <input type="text" id="city2" placeholder="city" />
+      <input type="text" id="country2" placeholder="country" />
+      <input type="text" id="latitude2" placeholder="latitude" />
+      <input type="text" id="longitude2" placeholder="longitude" />
+      <button id="update">Update</button>
+    </div>
+
+    <div id="4" class="tabcontent">
+      <h3>Delete</h3>
+      <input
+        type="text"
+        id="idDelete"
+        placeholder="Enter Location Name to Delete"
+      />
+      <button id="delete">Delete</button>
+    </div>
+
+    <div id="5" class="tabcontent">
+      <button id="show">Show All Data</button>
+      <h></h>
+    </div>
+
+    <div class="message">
+      <h3 class="error" style="color: red"></h3>
+      <h3 class="result" style="color: green"></h3>
+    </div>
+
+    <script>
+      $('#submit').on('click', function () {
+        var data = {
+          name: document.getElementById('name').value,
+          city: document.getElementById('city').value,
+          country: document.getElementById('country').value,
+          longitude: document.getElementById('longitude').value,
+          latitude: document.getElementById('latitude').value,
+        }
+        $.ajax({
+          url: '/addLocation',
+          type: 'POST',
+          data: data,
+          success: function (serverResponse) {
+            $('.result').empty()
+            $('.result').append(
+              '<h3>' + JSON.stringify(serverResponse.message) + '</h3>'
+            )
+          },
+        })
+      })
+
+      $('#update').on('click', function () {
+        var data = {
+          name: document.getElementById('name2').value,
+          city: document.getElementById('city2').value,
+          country: document.getElementById('country2').value,
+          longitude: document.getElementById('longitude2').value,
+          latitude: document.getElementById('latitude2').value,
+        }
+        $.ajax({
+          url: '/updateLocation',
+          type: 'POST',
+          data: data,
+          success: function (serverResponse) {
+            $('.result').empty()
+            $('.result').append(
+              '<h3>' + JSON.stringify(serverResponse.message) + '</h3>'
+            )
+          },
+        })
+      })
+
+      $('#search').on('click', function () {
+        $.ajax({
+          url: '/searchLocation',
+          type: 'GET',
+          data: { locationId: document.getElementById('idSearch').value },
+          success: function (serverResponse) {
+            $('.result').empty()
+            $('.result').append(
+              '<h3>' + JSON.stringify(serverResponse.data) + '</h3>'
+            )
+          },
+        })
+      })
+
+      $('#show').on('click', function () {
+        $.ajax({
+          url: '/allDetailLocations',
+          type: 'GET',
+          success: function (serverResponse) {
+            $('.result').empty()
+            $('.result').append(
+              '<h3>' + JSON.stringify(serverResponse.data) + '</h3>'
+            )
+          },
+        })
+      })
+
+      $('#delete').on('click', function () {
+        $.ajax({
+          url: '/deleteLocation',
+          type: 'POST',
+          data: { locationId: document.getElementById('idDelete').value },
+          success: function (serverResponse) {
+            $('.result').empty()
+            $('.result').append(
+              '<h3>' + JSON.stringify(serverResponse.message) + '</h3>'
+            )
+          },
+        })
+      })
+    </script>
+
+    <script>
+      function openCity(evt, cityName) {
+        var i, tabcontent, tablinks
+        tabcontent = document.getElementsByClassName('tabcontent')
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = 'none'
+        }
+        tablinks = document.getElementsByClassName('tablinks')
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(' active', '')
+        }
+        document.getElementById(cityName).style.display = 'block'
+        evt.currentTarget.className += ' active'
+      }
+
+      // Get the element with id="defaultOpen" and click on it
+      document.getElementById('defaultOpen').click()
+    </script>
+  </body>
+</html>
